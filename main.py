@@ -1,6 +1,5 @@
 import requests
 import json
-import pprint
 
 r = requests.get('http://www.geoplugin.net/json.gp')
 
