@@ -1,4 +1,4 @@
-# Previsão do tempo
+# App de previsão do tempo
 App de previsão do tempo. Nele, foram utilizadas requisições HTTP para pegar informações de diferentes serviços meteorológicos e apresentar a previsão do tempo ao usuário.
 
 Ao rodar a aplicação, ela já identificará o seu local a partir do seu IP e fornecerá informações sobre o clima do local.
