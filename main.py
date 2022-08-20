@@ -1,6 +1,5 @@
 import requests
 import json
-import pprint
 
 accuweatherApiKey = 'f2MFsAFv1sDdmoj6S9VRqeMC2tGChW4R'
 
@@ -24,9 +23,21 @@ else:
         nomeLocal = locationResponse['LocalizedName'] + ", " \
             + locationResponse['AdministrativeArea']['LocalizedName'] + ". " \
             + locationResponse['Country']['LocalizedName']
-
         codigoLocal = locationResponse['Key']
 
-        print("Local: " + nomeLocal)
-        print("Codigo: " + codigoLocal)
+        print('Obtendo clima do local: ' + nomeLocal)
 
+        #API que retorna a temperatura e o texto do clima
+        currentConditionsApiUrl = "http://dataservice.accuweather.com/currentconditions/v1/" + codigoLocal + "?apikey=" + accuweatherApiKey + "&language=pt-br"
+        r3 = requests.get(currentConditionsApiUrl)
+
+        if (r3.status_code != 200):
+            print('Não foi possível obter a temperatura do local!')
+        else:
+            currentConditionsResponse = json.loads(r3.text)
+
+        textoClima = currentConditionsResponse[0]['WeatherText']
+        temperatura = currentConditionsResponse[0]['Temperature']['Metric']['Value']
+
+        print('Clima no momento: ' + textoClima)
+        print('Temperatura: ' + str(temperatura) + ' oC')
