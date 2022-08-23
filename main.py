@@ -9,12 +9,16 @@ def pegarCoordenadas():
 
     if (r.status_code != 200):
         print('Não foi possível obter a localização!')
+        return None
     else:
-        localizacao = json.loads(r.text)  # Resposta da requisição transformada em JSON
-        coordenadas = {}
-        coordenadas['latitude'] = localizacao['geoplugin_latitude']
-        coordenadas['longitude'] = localizacao['geoplugin_longitude']
-        return coordenadas  # Retorna um dicionário com a latitude e longitude
+        try:
+            localizacao = json.loads(r.text)  # Resposta da requisição transformada em JSON
+            coordenadas = {}
+            coordenadas['latitude'] = localizacao['geoplugin_latitude']
+            coordenadas['longitude'] = localizacao['geoplugin_longitude']
+            return coordenadas  # Retorna um dicionário com a latitude e longitude
+        except:
+            return None
 
 def pegarCodigoDoLocal(latitude, longitude):
     # API que retorna o código do local
@@ -23,14 +27,18 @@ def pegarCodigoDoLocal(latitude, longitude):
 
     if (r.status_code != 200):
         print('Não foi possível obter o código do local!')
+        return None
     else:
-        locationResponse = json.loads(r.text)
-        infoLocal = {}
-        infoLocal['nomeLocal'] = locationResponse['LocalizedName'] + ", " \
+        try:
+            locationResponse = json.loads(r.text)
+            infoLocal = {}
+            infoLocal['nomeLocal'] = locationResponse['LocalizedName'] + ", " \
                                  + locationResponse['AdministrativeArea']['LocalizedName'] + ". " \
                                  + locationResponse['Country']['LocalizedName']
-        infoLocal['codigoLocal'] = locationResponse['Key']
-        return infoLocal
+            infoLocal['codigoLocal'] = locationResponse['Key']
+            return infoLocal
+        except:
+            return None
 
 def pegarTempoAgora(codigoLocal, nomeLocal):
     # API que retorna a temperatura e o texto do clima
@@ -39,22 +47,25 @@ def pegarTempoAgora(codigoLocal, nomeLocal):
 
     if (r.status_code != 200):
         print('Não foi possível obter a temperatura do local!')
+        return None
     else:
-        currentConditionsResponse = json.loads(r.text)
-        infoClima = {}
-        infoClima['textoClima'] = currentConditionsResponse[0]['WeatherText']
-        infoClima['temperatura'] = currentConditionsResponse[0]['Temperature']['Metric']['Value']
-        infoClima['nomeLocal'] = nomeLocal
-        return infoClima
+        try:
+            currentConditionsResponse = json.loads(r.text)
+            infoClima = {}
+            infoClima['textoClima'] = currentConditionsResponse[0]['WeatherText']
+            infoClima['temperatura'] = currentConditionsResponse[0]['Temperature']['Metric']['Value']
+            infoClima['nomeLocal'] = nomeLocal
+            return infoClima
+        except:
+            return None
 
 # Inicio do programa
-
-coordenadas = pegarCoordenadas()
-
-local = pegarCodigoDoLocal(coordenadas['latitude'], coordenadas['longitude'])
-
-climaAtual = pegarTempoAgora(local['codigoLocal'], local['nomeLocal'])
-
-print('Clima atual em: ' + climaAtual['nomeLocal'])
-print(climaAtual['textoClima'])
-print('Temperatura: ' + str(climaAtual['temperatura']) + ' oC')
+try:
+    coordenadas = pegarCoordenadas()
+    local = pegarCodigoDoLocal(coordenadas['latitude'], coordenadas['longitude'])
+    climaAtual = pegarTempoAgora(local['codigoLocal'], local['nomeLocal'])
+    print('Clima atual em: ' + climaAtual['nomeLocal'])
+    print(climaAtual['textoClima'])
+    print('Temperatura: ' + str(climaAtual['temperatura']) + ' oC')
+except:
+    print('Erro ao processar a solicitação')
